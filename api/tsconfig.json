@@ -5,7 +5,7 @@
     "strict": true,
     "module": "commonjs",
     "moduleResolution": "node",
-    "target": "es6",
+    "target": "es2018",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,

@@ -7,6 +7,6 @@ exports.recordsRouter = void 0;
 const recordsController_1 = require("../controllers/recordsController");
 const express_1 = __importDefault(require("express"));
 exports.recordsRouter = express_1.default.Router();
-exports.recordsRouter.get('/', recordsController_1.getExampleData);
+exports.recordsRouter.put('/devices/:deviceId', recordsController_1.updateDeviceRecord);
 exports.recordsRouter.post('/', () => { });
 //# sourceMappingURL=recordsRouter.js.map

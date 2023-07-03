@@ -1,9 +1,9 @@
 
-import { getExampleData } from '../controllers/recordsController';
+import { updateDeviceRecord } from '../controllers/recordsController';
 
 import express from 'express';
 
 export const recordsRouter = express.Router();
 
-recordsRouter.get('/', getExampleData);
+recordsRouter.put('/devices/:deviceId', updateDeviceRecord);
 recordsRouter.post('/', () => {});

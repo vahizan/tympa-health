@@ -9,15 +9,30 @@ const ajv = new ajv_1.default();
 exports.deviceRecordSchema = {
     type: "object",
     properties: {
-        name: {
-            type: "string"
+        device_id: {
+            type: "string",
         },
-        osType: {
-            type: "string"
-        }
+        device_status_code: {
+            type: "string",
+        },
+        tenant_id: { type: "string", nullable: true },
+        device_make: { type: "string", nullable: true },
+        device_model: { type: "string", nullable: true },
+        device_activation_code: { type: "string", nullable: true },
+        device_os_version: { type: "string", nullable: true },
+        app_identifier: { type: "string", nullable: true },
+        app_version: { type: "string", nullable: true },
+        last_updated_ip: { type: "string", nullable: true },
+        device_settings_json: { type: "object", nullable: true },
+        device_projects_json: { type: "object", nullable: true },
+        created_datetime: { type: "number", nullable: true },
+        last_updated_datetime: {
+            type: "number",
+            nullable: true,
+        },
     },
-    required: ["name", "osType"],
-    additionalProperties: false
+    required: ["device_id", "device_status_code"],
+    additionalProperties: false,
 };
 exports.deviceRecordValidate = ajv.compile(exports.deviceRecordSchema);
 //# sourceMappingURL=DeviceRecordsRequest.js.map

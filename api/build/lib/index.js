@@ -7,14 +7,14 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const recordsRouter_1 = require("./routers/recordsRouter");
 const app = (0, express_1.default)();
-const port = 8080;
+const PORT = process.env.NODE_DOCKER_PORT || 6868;
 let corsOptions = {
-    origin: "http://localhost:8081"
+    origin: "http://localhost:8081",
 };
 app.use((0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
 app.use(recordsRouter_1.recordsRouter);
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
 //# sourceMappingURL=index.js.map

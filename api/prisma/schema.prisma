@@ -1,11 +1,25 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model tbl_device {
+  device_id              String   @id(map: "tbl_device_pk") @unique(map: "tbl_device_device_id_uindex") @db.VarChar
+  device_status_code     String   @default("NEW") @db.VarChar
+  tenant_id              String?  @db.VarChar
+  device_make            String?  @db.VarChar
+  device_model           String?  @db.VarChar
+  device_activation_code String   @default(dbgenerated("(floor(((random() * (((99999 - 10000) + 1))::double precision) + (10000)::double precision)))::text")) @db.VarChar
+  device_os_version      String?  @db.VarChar
+  device_settings_json   Json?    @db.Json
+  device_projects_json   Json?    @db.Json
+  app_identifier         String?  @db.VarChar
+  app_version            String?  @db.VarChar
+  created_datetime       DateTime @default(now()) @db.Timestamp(6)
+  last_updated_datetime  DateTime @default(now()) @db.Timestamp(6)
+  last_updated_ip        String?  @db.VarChar
 }
