@@ -7,7 +7,11 @@ const HomePage = () => {
     const { apiLoading, data } = useApi(getAllDevices, []);
 
     return (
-        <main>{data && !apiLoading ? <DeviceTable tableData={data} /> : <div className={'loader'}>Loading</div>}</main>
+        <main>
+            {data && <DeviceTable tableData={data} />}
+            {apiLoading && <div className="loader">Loading</div>}
+            {!apiLoading && !data && <div className="error">Unable to get records</div>}
+        </main>
     );
 };
 

@@ -2,18 +2,21 @@ import { deleteObjectFromMap } from './helper';
 import DeviceTableRow from '../../interfaces/DeviceTableRow';
 
 describe('deleteObjectFromMap', () => {
+    const mockReleaseDate = new Date('2022-01-01');
     const devicesMap: Record<string, DeviceTableRow> = {
         deviceId1: {
+            device_id: '1',
             device_make: 'Make 1',
             device_model: 'Model 1',
             device_os_version: 'OS Version 1',
-            release_date: '2022-01-01'
+            release_date: mockReleaseDate
         },
         deviceId2: {
+            device_id: '1',
             device_make: 'Make 2',
             device_model: 'Model 2',
             device_os_version: 'OS Version 2',
-            release_date: '2022-02-02'
+            release_date: mockReleaseDate
         }
     };
 
@@ -22,10 +25,11 @@ describe('deleteObjectFromMap', () => {
 
         expect(updatedMap).toEqual({
             deviceId1: {
+                device_id: '1',
                 device_make: 'Make 1',
                 device_model: 'Model 1',
                 device_os_version: 'OS Version 1',
-                release_date: '2022-01-01'
+                release_date: mockReleaseDate
             }
         });
     });

@@ -4,9 +4,9 @@
 
 ## Installation Guide
 
-- install nodejs version >=14
+- install nodejs version >=18
 - `npm install`
-  - You can use `npm ci` for clean installs after package updates, but should use `npm install` for the first build as it will check you are runnning at least Node 14
+  - You can use `npm ci` for clean installs after package updates, but should use `npm install` for the first build as it will check you are runnning at least Node 18
 
 ## Available Scripts
 

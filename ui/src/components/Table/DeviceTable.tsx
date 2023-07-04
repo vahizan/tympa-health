@@ -1,13 +1,15 @@
 import React, { FC, useState } from 'react';
-import DeviceRecord from '../../../interfaces/DeviceRecord';
 import DeviceTableRow from '../../../interfaces/DeviceTableRow';
-
 import styles from './table.module.scss';
+import { addDevice, removeDevice, updateDevice } from '../../services/api';
+import { convertRecordWithIdToTableRow, removeDeviceById, toDeviceRecordWithId, toDeviceRowMap } from './helpers';
 import DeviceRow from './DeviceRow';
-import { removeDevice, updateDevice } from '../../services/api';
-import { deleteObjectFromMap } from '../../helpers/helper';
+import DeviceRecordWithId from '../../../interfaces/DeviceRecordWithId';
+import DeviceRecord from '../../../interfaces/DeviceRecord';
+import { DeviceTableControl } from './DeviceTableControl';
 
 const TableHeaders = {
+    device_id: 'Id',
     device_make: 'Brand',
     device_model: 'Model',
     device_os_version: 'OS',
@@ -15,57 +17,43 @@ const TableHeaders = {
 };
 
 interface TableProps {
-    tableData: DeviceRecord[];
+    tableData: DeviceRecordWithId[];
 }
-const toDeviceRowMap = (data: DeviceRecord[]): Record<string, DeviceTableRow> => {
-    const map: Record<string, DeviceTableRow> = {};
-    data.forEach((row) => {
-        map[row.device_id] = {
-            device_make: row?.device_make,
-            device_model: row?.device_model,
-            device_os_version: row?.device_os_version,
-            release_date: row?.device_os_version
-        };
-    });
-    return map;
-};
 
 const generateCells = (
     dataMap: Record<string, DeviceTableRow>,
-    setValue: (deviceId: string, device: DeviceTableRow) => void,
+    setValue: (deviceId: string, device: DeviceRecord) => void,
     handleRemove: (deviceId: string) => void
 ) => {
-    const keys = Object.keys(dataMap);
-    return keys.map((deviceId, index) => (
-        <div key={`deviceRow-${index}`} className={styles.deviceRowContainer}>
-            <DeviceRow
-                key={`${deviceId}-${index}`}
-                deviceId={deviceId}
-                device={dataMap[deviceId]}
-                onUpdateDeviceRecord={setValue}
-            />
-            <button onClick={() => handleRemove(deviceId)}>Remove</button>
-        </div>
+    return Object.entries(dataMap).map(([deviceId, device], index) => (
+        <DeviceRow
+            key={`${deviceId}-${index}`}
+            deviceId={deviceId}
+            device={device}
+            onUpdateDeviceRecord={setValue}
+            deleteDevice={handleRemove}
+        />
     ));
 };
 
 const DeviceTable: FC<TableProps> = ({ tableData }) => {
+    const [deviceId, setDeviceId] = useState<string>('');
     const [data, setData] = useState<Record<string, DeviceTableRow>>(toDeviceRowMap(tableData));
 
     const handleUpdate = (deviceId: string, device: DeviceTableRow) => {
-        const newData = { ...data };
-        newData[deviceId] = device;
-        setData(newData);
+        setData((prevData) => ({
+            ...prevData,
+            [deviceId]: device
+        }));
     };
 
     const handleRemove = (deviceId: string) => {
-        const newData = deleteObjectFromMap(data, deviceId);
-        setData(newData);
+        setData(removeDeviceById(data, deviceId));
     };
 
-    const updateDeviceRow = (deviceId: string, device: DeviceTableRow) => {
+    const updateDeviceById = (deviceId: string, device: DeviceRecord) => {
         updateDevice({ deviceId, device })
-            .then(() => handleUpdate(deviceId, device))
+            .then(() => handleUpdate(deviceId, toDeviceRecordWithId(device, deviceId) as DeviceTableRow))
             .catch((err) => console.log(err.message));
     };
 
@@ -75,18 +63,35 @@ const DeviceTable: FC<TableProps> = ({ tableData }) => {
             .catch((err) => console.log(err.message));
     };
 
+    const handleNewDeviceSubmit = () => {
+        addDevice({ device_id: deviceId })
+            .then(() => {
+                setData((prevData) => ({
+                    ...prevData,
+                    [deviceId]: convertRecordWithIdToTableRow({ device_id: deviceId })
+                }));
+            })
+            .catch((err) => console.log(err.message));
+    };
+
     const headerValues = Object.values(TableHeaders);
     return (
-        <div>
-            <div className={styles.headerRow}>
-                <div className={styles.headerRow__headerCell}>
-                    {headerValues.map((value, index) => (
-                        <div key={`${value}-${index}`}>{value}</div>
-                    ))}
-                </div>
-            </div>
-            <div className={styles.tableBody}>{generateCells(data, updateDeviceRow, removeDeviceRow)}</div>
-        </div>
+        <>
+            <DeviceTableControl onChange={setDeviceId} handleSubmit={handleNewDeviceSubmit} />
+            <table className={styles.table}>
+                <thead className={styles.table__header}>
+                    <tr className={styles.table__headerRow}>
+                        {headerValues.map((value, index) => (
+                            <th className={styles.table__headerRow__headerCell} key={`${value}-${index}`}>
+                                {value}
+                            </th>
+                        ))}
+                        <th className={styles.table__headerRow__headerCell}>Delete Device</th>
+                    </tr>
+                </thead>
+                <tbody>{generateCells(data, updateDeviceById, removeDeviceRow)}</tbody>
+            </table>
+        </>
     );
 };
 

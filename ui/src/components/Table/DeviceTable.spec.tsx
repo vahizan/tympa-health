@@ -1,79 +1,107 @@
 import React from 'react';
 import { render, fireEvent, screen, waitFor } from '@testing-library/react';
 import DeviceTable from './DeviceTable';
-import { removeDevice, updateDevice } from '../../services/api';
-import DeviceRecord from '../../../interfaces/DeviceRecord';
+import { updateDevice, addDevice, removeDevice } from '../../services/api';
 
 jest.mock('../../services/api', () => {
     return {
         updateDevice: jest.fn(),
-        removeDevice: jest.fn()
+        removeDevice: jest.fn(),
+        addDevice: jest.fn()
     };
 });
-jest.mock('../../helpers/helper');
-
-const mockTableData: DeviceRecord[] = [
-    {
-        device_id: '1',
-        device_status_code: 'NEW',
-        device_make: 'Brand 1',
-        device_model: 'Model 1',
-        device_os_version: 'OS 1'
-    },
-    {
-        device_id: '2',
-        device_status_code: 'NEW',
-        device_make: 'Brand 2',
-        device_model: 'Model 2',
-        device_os_version: 'OS 2'
-    }
-];
 
 describe('DeviceTable', () => {
-    afterEach(() => {
-        jest.restoreAllMocks();
+    const mockTableData = [
+        {
+            device_id: '1',
+            device_make: 'Brand 1',
+            device_model: 'Model 1',
+            device_os_version: 'OS 1',
+            release_date: '2022-01-01'
+        },
+        {
+            device_id: '2',
+            device_make: 'Brand 2',
+            device_model: 'Model 2',
+            device_os_version: 'OS 2',
+            release_date: '2022-02-01'
+        }
+    ];
+
+    it('renders the table headers correctly', () => {
+        render(<DeviceTable tableData={[]} />);
+        const headers = screen.getAllByRole('columnheader');
+        expect(headers).toHaveLength(6);
+        expect(headers[0]).toHaveTextContent('Id');
+        expect(headers[1]).toHaveTextContent('Brand');
+        expect(headers[2]).toHaveTextContent('Model');
+        expect(headers[3]).toHaveTextContent('OS');
+        expect(headers[4]).toHaveTextContent('Release Date');
+        expect(headers[5]).toHaveTextContent('Delete Device');
     });
 
-    it('renders table headers correctly', () => {
-        const { getByText } = render(<DeviceTable tableData={mockTableData} />);
-
-        expect(getByText('Brand')).toBeInTheDocument();
-        expect(getByText('Model')).toBeInTheDocument();
-        expect(getByText('OS')).toBeInTheDocument();
-        expect(getByText('Release Date')).toBeInTheDocument();
-    });
-
-    it('renders table rows correctly', () => {
+    it('renders the table rows correctly', () => {
         render(<DeviceTable tableData={mockTableData} />);
-
-        expect(screen.getByText(mockTableData[0].device_make || '')).toBeInTheDocument();
-        expect(screen.getByText(mockTableData[0].device_model || '')).toBeInTheDocument();
-        expect(screen.getByText(mockTableData[0].device_os_version || '')).toBeInTheDocument();
-        expect(screen.getByText(mockTableData[0].release_date || '')).toBeInTheDocument();
+        const rows = screen.getAllByRole('row');
+        expect(rows).toHaveLength(3);
     });
 
-    it('calls updateDevice and handleUpdate when a device row is updated', async () => {
-        render(<DeviceTable tableData={mockTableData} />);
+    it('allows adding a new device', async () => {
+        (addDevice as jest.Mock).mockResolvedValue('success');
 
+        render(<DeviceTable tableData={mockTableData} />);
+        const addNewDeviceButton = screen.getByText('Create New Device');
+        fireEvent.click(addNewDeviceButton);
+
+        const deviceIdInput = screen.getByPlaceholderText('Enter Device Id');
+        const createButton = screen.getByText('Create');
+
+        fireEvent.change(deviceIdInput, { target: { value: '3_new_device_id' } });
+        fireEvent.click(createButton);
+
+        expect(deviceIdInput).toHaveValue('3_new_device_id');
+        const newDeviceRow = screen.getByDisplayValue('3_new_device_id');
+        expect(newDeviceRow).toBeInTheDocument();
+        expect(addDevice).toHaveBeenCalledWith({ device_id: '3_new_device_id' });
+    });
+
+    it('allows deleting a device', () => {
+        (removeDevice as jest.Mock).mockResolvedValue('success');
+        render(<DeviceTable tableData={mockTableData} />);
+        const deleteDeviceButton = screen.getAllByText('Remove')[0];
+        fireEvent.click(deleteDeviceButton);
+
+        const deletedDeviceRow = screen.queryByText('1');
+        expect(deletedDeviceRow).not.toBeInTheDocument();
+    });
+
+    it('calls the API to update a device record', async () => {
+        (updateDevice as jest.Mock).mockResolvedValue('success');
+        render(<DeviceTable tableData={mockTableData} />);
         const inputElements = screen.getAllByRole('textbox');
 
-        (updateDevice as jest.Mock).mockResolvedValue({});
+        fireEvent.change(inputElements[1], { target: { value: 'SOMETHING' } });
+        fireEvent.blur(inputElements[1]);
 
-        fireEvent.change(inputElements[1], { target: { value: 'New Value' } });
-
-        await waitFor(() => {
-            expect(updateDevice).toHaveBeenCalledTimes(1);
-            expect(updateDevice).toHaveBeenCalledWith({ deviceId: '1', device: mockTableData[0] });
+        await expect(updateDevice).toHaveBeenCalledWith({
+            device: {
+                device_make: 'SOMETHING',
+                device_model: 'Model 1',
+                device_os_version: 'OS 1',
+                release_date: '2022-01-01T00:00:00.000Z'
+            },
+            deviceId: '1'
         });
     });
 
-    it('calls removeDevice and handleRemove when a device row is removed', () => {
+    it('calls the API to remove a device record', () => {
+        (removeDevice as jest.Mock).mockResolvedValue('success');
+
         render(<DeviceTable tableData={mockTableData} />);
-        const removeButtons = screen.getAllByText('Remove');
+        const deleteDeviceButton = screen.getAllByText('Remove')[0];
+        fireEvent.click(deleteDeviceButton);
 
-        fireEvent.click(removeButtons[0]);
-
-        expect(removeDevice).toHaveBeenCalledTimes(1);
         expect(removeDevice).toHaveBeenCalledWith('1');
     });
 });

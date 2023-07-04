@@ -1,6 +1,5 @@
 interface DeviceRecord {
-    device_id: string;
-    device_status_code: string;
+    device_status_code?: string;
     tenant_id?: string;
     device_make?: string;
     device_model?: string;
@@ -10,9 +9,9 @@ interface DeviceRecord {
     device_projects_json?: object;
     app_identifier?: string;
     app_version?: string;
-    created_datetime?: number;
-    release_date?: number;
-    last_updated_datetime?: number;
+    created_datetime?: string;
+    release_date?: string;
+    last_updated_datetime?: string;
     last_updated_ip?: string;
 }
 
