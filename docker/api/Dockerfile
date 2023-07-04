@@ -2,7 +2,6 @@ FROM node:20-buster AS builder
 
 WORKDIR /api
 COPY package*.json ./
-COPY .env ./.env
 COPY prisma ./prisma/
 COPY tsconfig.json ./
 
