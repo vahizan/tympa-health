@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-var-requires,no-undef */
 
 const path = require('path');
+const dotenv = require('dotenv-webpack');
 const { merge } = require('webpack-merge');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -62,6 +63,9 @@ const prodConfig = () => {
         },
         performance: {
             hints: false
+        },
+        devServer: {
+            port: 3000
         },
         optimization: {
             minimize: true,

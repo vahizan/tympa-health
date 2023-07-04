@@ -60,10 +60,12 @@ describe('DeviceTable', () => {
         fireEvent.change(deviceIdInput, { target: { value: '3_new_device_id' } });
         fireEvent.click(createButton);
 
-        expect(deviceIdInput).toHaveValue('3_new_device_id');
-        const newDeviceRow = screen.getByDisplayValue('3_new_device_id');
-        expect(newDeviceRow).toBeInTheDocument();
-        expect(addDevice).toHaveBeenCalledWith({ device_id: '3_new_device_id' });
+        await waitFor(() => {
+            expect(deviceIdInput).toHaveValue('3_new_device_id');
+            const newDeviceRow = screen.getByDisplayValue('3_new_device_id');
+            expect(newDeviceRow).toBeInTheDocument();
+            expect(addDevice).toHaveBeenCalledWith({ device_id: '3_new_device_id' });
+        });
     });
 
     it('allows deleting a device', () => {

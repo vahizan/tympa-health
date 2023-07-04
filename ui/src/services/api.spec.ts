@@ -1,6 +1,13 @@
 import axios from 'axios';
 import { addDevice, removeDevice, getAllDevices, updateDevice } from './api';
-import DeviceTableRow from '../../interfaces/DeviceTableRow';
+
+jest.mock('process', () => {
+    return {
+        env: {
+            REACT_APP_API_URL: 'http://localhost:6868'
+        }
+    };
+});
 
 describe('api calls', () => {
     afterEach(() => jest.restoreAllMocks());

@@ -2,8 +2,7 @@ import axios from 'axios';
 import DeviceRecord from '../../interfaces/DeviceRecord';
 import DeviceRecordWithId from '../../interfaces/DeviceRecordWithId';
 
-const API_URL = 'http://localhost:6868'; //process.env.REACT_APP_API_URL
-
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:6868'; //fallback on default api url
 export const updateDevice = async (body: { deviceId: string; device: DeviceRecord }): Promise<void> => {
     const url = `${API_URL}/devices/${body.deviceId}`;
     const { data } = await axios.put(url, body.device);

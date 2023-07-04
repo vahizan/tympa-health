@@ -4,12 +4,10 @@ WORKDIR /ui
 
 COPY package*.json ./
 COPY tsconfig.json ./
+COPY .env ./.env
 
 RUN npm ci --omit=dev
 COPY . .
-
-ARG REACT_APP_API_BASE_URL
-ENV REACT_APP_API_BASE_URL=$REACT_APP_API_BASE_URL
 
 CMD ["npm","run","build"]
 

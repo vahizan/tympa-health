@@ -40,8 +40,9 @@ services:
     build:
       context: ./ui
       dockerfile: ../docker/ui/Dockerfile
-      args:
-        - REACT_APP_API_BASE_URL=$CLIENT_API_BASE_URL
+    env_file: ./ui/.env
+    environment:
+        - REACT_APP_API_URL=$REACT_APP_API_URL
     ports:
       - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
     networks:

@@ -86,11 +86,8 @@ export const removeDeviceRecord = async (req: Request, res: Response) => {
       .status(200)
       .json({ message: `${deviceId} record deletion success` });
   } catch (error) {
-    return handleErrorResponse(
-      res,
-      500,
-      "Failed to remove record. Please try again later"
-    );
+    const err = error as unknown as Error;
+    return handleErrorResponse(res, 500, err.message);
   }
 };
 
