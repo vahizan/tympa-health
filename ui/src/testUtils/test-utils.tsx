@@ -30,7 +30,7 @@ export const allTheProviders: FunctionComponent<AllTheProvidersProps> = ({
     return (
         <Router navigator={history} location={{ pathname: '/' }}>
             <ErrorProvider errorContext={errorContext}>
-                    <ExampleContext.ExampleProvider>{children}</ExampleContext.ExampleProvider>
+                <ExampleContext.ExampleProvider>{children}</ExampleContext.ExampleProvider>
             </ErrorProvider>
         </Router>
     );
@@ -51,7 +51,6 @@ const customHookRender: <TProps, TResult>(
     callback: (props: TProps) => TResult,
     options?: RenderHookOptions<TProps> & CustomRenderOptions
 ) => RenderHookResult<TProps, TResult> = (hook, options?) => {
-    // @ts-ignore
     return renderHook(hook, {
         wrapper: (props) => allTheProviders({ ...props, ...options?.wrapperProps }),
         ...options
@@ -71,7 +70,6 @@ export const mockErrorStatusContext = (
     mockContext.mockReturnValue(context);
 };
 
-
 export const mockExampleContext = (
     contextModule: typeof ExampleContext,
     options?: Partial<ExampleContext.ExampleContextProps>
@@ -82,8 +80,6 @@ export const mockExampleContext = (
     } as ExampleContext.ExampleContextProps;
     mockContext.mockReturnValue(context);
 };
-
-export const flushAllPromises = (): Promise<void> => new Promise(setImmediate);
 
 // re-export everything
 export * from '@testing-library/react';

@@ -3,13 +3,13 @@ import cors from "cors";
 import { recordsRouter } from "./routers/recordsRouter";
 
 const app = express();
-const PORT = process.env.NODE_DOCKER_PORT;
+const PORT = process.env.NODE_DOCKER_PORT || 8080;
 
 let corsOptions = {
-  origin: process.env.CLIENT_ORIGIN || "http://localhost:8081",
+  origin: process.env.CLIENT_ORIGIN || "http://localhost:3001",
 };
-console.log("PORT:", PORT);
-app.use(cors());
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.use(recordsRouter);

@@ -40,7 +40,6 @@ const prodConfig = () => {
                             loader: 'css-loader',
                             options: {
                                 modules: true,
-                                sourceMap: true,
                                 importLoaders: 2
                             }
                         },
@@ -68,7 +67,6 @@ const prodConfig = () => {
             minimize: true,
             minimizer: [
                 new TerserPlugin({
-                    sourceMap: true,
                     extractComments: false,
                     terserOptions: {
                         output: {

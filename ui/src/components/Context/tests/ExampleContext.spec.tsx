@@ -1,8 +1,7 @@
 import React from 'react';
-
-import { renderHook } from '@testing-library/react-hooks';
-import { act, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { ExampleProvider, useExampleContext } from '../ExampleContext';
+import { renderHook } from '../../../testUtils/test-utils';
 
 describe('ValuationProvider', () => {
     it('renders children', () => {
@@ -15,12 +14,10 @@ describe('ValuationProvider', () => {
     });
 
     it('provides default context values', () => {
-        const { result } = renderHook(() => useExampleContext(), { wrapper: ExampleProvider });
-
-
+        renderHook(() => useExampleContext(), { wrapper: ExampleProvider });
     });
-it('updates context values', () => {
-        const { result } = renderHook(() => useExampleContext(), { wrapper: ExampleProvider });
 
+    it('updates context values', () => {
+        renderHook(() => useExampleContext(), { wrapper: ExampleProvider });
     });
 });

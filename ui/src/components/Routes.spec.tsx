@@ -3,7 +3,8 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import AppRoutes, { ROUTE_PATHS } from './AppRoutes';
 
-jest.mock('./Page/ExamplePage', () => () => <div data-test="example-page" />);
+// eslint-disable-next-line react/display-name
+jest.mock('./Page/HomePage', () => () => <div data-testid="example-page" />);
 
 describe('Routes', () => {
     afterEach(() => {

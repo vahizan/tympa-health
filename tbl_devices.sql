@@ -13,6 +13,7 @@ CREATE table tbl_device
 	app_version varchar default NULL,
 	created_datetime timestamp default CURRENT_TIMESTAMP not null,
 	last_updated_datetime timestamp default CURRENT_TIMESTAMP not null,
+	release_date timestamp default NULL,
 	last_updated_ip varchar default NULL
 );
 

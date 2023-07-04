@@ -93,7 +93,7 @@ const devConfig = () => {
                 chunks: 'all'
             })
         ],
-        mode: 'production'
+        mode: 'development'
     });
 };
 
